@@ -1,26 +1,35 @@
 import sys
 import re
+import csv
 
 
 
-for line in sys.stdin:
-    data = line.split("\t")
-    fantastic=re.compile('fantastic')
-    fantastically=re.compile('fantastically')
-    fantastic_count=0
-    fantastically_list=[]
-    if len(data)==20:
-        for	line in	data:
+fantastic=re.compile('fantastic$',re.IGNORECASE)
+fantastically=re.compile('fantastically',re.IGNORECASE)
+fantastic_count=0
+fantastically_list=[]
+
+with open('forum_node_sample.tsv', 'rb') as csvfile:
+
+    reader = csv.reader(csvfile, delimiter='\t', quotechar='|')
+    for	line in	reader:
+        leng=len(line)
+        if 5<=len(line) <=19:
             body = line[4]
             index = line[0]
-            tokens=re.split(' |.|,|!|\?|:|;|"|(|)|<|>|[|]#|$|=|-|/',body)
+            index=index.strip('"')
+            #tokens=re.split('<|>|"',body)
+            #tokens=re.split('\s|\.|,|!|\?|:|;|"|\(|\)|<|>|[|]|#|\$|=|-|/',body)
+            tokens = re.split(r"[.!?,:;\"()<>\[\]#$=\-\/\s]", body)
             for token in tokens:
-                if fantastic.IGNORECASE(token):
+                if fantastic.match(str(token)):
                     fantastic_count =fantastic_count+1
-                elif fantastically.IGNORECASE(token):
-                    fantastically_list.append(index)
+                elif fantastically.match(str(token)):
+            	  	fantastically_list.append(index)
+            	
 list_str=' '.join(fantastically_list)
 print "%d\t%s"%(fantastic_count,list_str)
+
 
 
 
