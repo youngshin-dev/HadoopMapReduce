@@ -1,5 +1,6 @@
 #!/usr/bin/python
-import sys
+
+# This can be used as a reducer to merge the list of index and sum up the word count
 
 fantastic_count=0
 fantastically_list=[]

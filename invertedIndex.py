@@ -1,6 +1,8 @@
-import sys
 import re
 import csv
+
+# This can be used as a mapper to count the number of times a certain word is used and to extract the forum_index where the word is used
+# thus serving as an inverted index
 
 
 
@@ -18,8 +20,6 @@ with open('forum_node_sample.tsv', 'rb') as csvfile:
             body = line[4]
             index = line[0]
             index=index.strip('"')
-            #tokens=re.split('<|>|"',body)
-            #tokens=re.split('\s|\.|,|!|\?|:|;|"|\(|\)|<|>|[|]|#|\$|=|-|/',body)
             tokens = re.split(r"[.!?,:;\"()<>\[\]#$=\-\/\s]", body)
             for token in tokens:
                 if fantastic.match(str(token)):
