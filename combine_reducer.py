@@ -1,4 +1,10 @@
 #!/usr/bin/python
+
+# This reducer will receive the composite keys that are in sorted order( first sorted by the 'id' and secondly sorted by the letter that indicate the origin (i.e 'A' or 'B')
+# It will split the key into two parts.
+# Assumption: 'id' is the primary key in the forum_user
+# I've provided the test string.
+
 import sys
 import csv
 

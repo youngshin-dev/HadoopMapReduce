@@ -1,4 +1,11 @@
 #!/usr/bin/python
+
+# A mapper for Hadoop job to combine forum_user file and forum_node file. The join is performed on the field 'author_id' in forum_node and 'id' in forum_user
+# this mapper will take both files as input and output key,value pairs where the key is a composite key that is consisting of id and a letter to indecate the origin
+# The value is the rest of the fields.
+#The sample file is my own local file that I extracted from the big file provided by Udacity course " Introduction to Hadoop and MapReduce"
+
+
 import sys
 import csv
 
