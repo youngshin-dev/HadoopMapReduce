@@ -1,8 +1,11 @@
 import sys
 import csv
 import collections
+from itertools import takewhile
 # This reducer takes composite keys that are id and hour delimited by '\t'
 # For each id, it will maintain current most frequent hour
+# This version uses counter method to take account for multiple most frequent hours.
+
 
 
 #for line in sys.stdin:
@@ -12,11 +15,7 @@ def reducer():
 
     old_id = None
     old_hour = None
-    prev_max_hour = 0
-    current_max_hour=0
-    prev_max_count = 0
-    current_max_count=0
-    count = 1
+    cnt = collections.Counter()
 
     for data in reader:
 
@@ -24,46 +23,47 @@ def reducer():
         this_hour=data[1]
 
         if old_id != None and old_hour !=None and old_id != this_id:
-
-            if prev_max_count < count:
-                prev_max_count=count
-                max_hour=old_hour
-            print '\t'.join((old_id,str(max_hour)))
-
-            prev_max_count=0
-            count = 1
-
-        elif old_id!=None and old_hour!=None and old_id == this_id and old_hour == this_hour:
-            count +=1
-        elif old_id!=None and old_hour!=None and old_id ==this_id and old_hour != this_hour:
-            if prev_max_count < count:
-                prev_max_count = count
-                max_hour=old_hour
-            count=1
+            items=cnt.most_common()
+            max_ = items[0][1]
+            max_list=list(takewhile(lambda x: x[1] == max_, items))
+            for item in max_list:
+                print '\t'.join((old_id,str(item[0])))
+            cnt = collections.Counter()
+            cnt[this_hour]+=1
+            old_hour = this_hour
+            old_id = this_id
 
 
-        old_hour=this_hour
-        old_id=this_id
+        elif old_id!=None and old_hour!=None and old_id == this_id:
+            cnt[this_hour]+=1
+            old_hour = this_hour
+
+        elif old_id==None and old_hour==None:
+            old_hour=this_hour
+            old_id=this_id
+            cnt[this_hour] += 1
 
 
     if old_id and old_hour:
-        if prev_max_count < count:
-            prev_max_count = count
-            max_hour=old_hour
-        print '\t'.join((old_id, str(max_hour)))
+        items = cnt.most_common()
+        max_ = items[0][1]
+        max_list = list(takewhile(lambda x: x[1] == max_, items))
+        for item in max_list:
+            print '\t'.join((old_id, str(item[0])))
 
 
 
 
-test_text ="""\"A\"\t\"2\"
+
+test_text ="""\"A\"\t\"1\"
 \"A\"\t\"2\"
 \"A\"\t\"3\"
 \"A\"\t\"3\"
-\"A\"\t\"3\"
+\"A\"\t\"4\"
 \"A\"\t\"4\"
 \"B\"\t\"1\"
-\"B\"\t\"2\"
-\"B\"\t\"2\"
+\"B\"\t\"1\"
+\"B\"\t\"1\"
 \"B\"\t\"3\"
 \"B\"\t\"3\"
 \"B\"\t\"3\"
